@@ -1,11 +1,11 @@
 {
   "name": "Associação Desportiva Douro Bats",
-  "short_name": "Douro Bats",
+  "short_name": "Ranking|Padel",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#111111",
-  "description": "App da Associação Desportiva Douro Bats",
+  "description": "App de ranking do padel da Associação Desportiva Douro Bats",
   "icons": [
     {
       "src": "assets/logo-192.png",
