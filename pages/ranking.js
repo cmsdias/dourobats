@@ -1,5 +1,5 @@
 // Link CSV do Google Sheets publicado
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/SEU_CSV_LINK/pub?gid=0&single=true&output=csv";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSu9ZGJ59j1Beyots09_Ui0QHv08a247oojM-1om4EQvu3g5ABG0pIKtmAb-WYD1TZGaR7OHvKnViHN/pub?gid=0&single=true&output=csv";
 
 async function loadRanking() {
   const resp = await fetch(SHEET_URL);
