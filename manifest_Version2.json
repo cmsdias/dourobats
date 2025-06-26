@@ -1,0 +1,21 @@
+{
+  "name": "Associação Desportiva Douro Bats",
+  "short_name": "Douro Bats",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#222955",
+  "theme_color": "#222955",
+  "description": "App da Associação Desportiva Douro Bats",
+  "icons": [
+    {
+      "src": "assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
