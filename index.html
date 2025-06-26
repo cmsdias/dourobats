@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Associação Desportiva Douro Bats</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Douro Bats">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="assets/logo-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="assets/styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Douro Bats">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
 </head>
 <body>
   <header>
@@ -25,7 +25,7 @@
   </header>
   <main>
     <h1>Bem-vindo à Associação Desportiva Douro Bats</h1>
-    <img src="assets/destaque.jpg" alt="Foto destaque" style="max-width: 100%; height: auto;">
+    <img src="assets/destaque.jpg" alt="Foto destaque" style="max-width: 100%; height: auto; filter: grayscale(1) contrast(1.2)">
     <p>
       Descubra as nossas modalidades, participe nos treinos e acompanhe o ranking dos nossos atletas!
     </p>
@@ -34,9 +34,27 @@
     <p>Associação Desportiva Douro Bats &copy; 2025</p>
   </footer>
   <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
+    // Service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+    // Barra instrução iOS
+    function isIosSafari() {
+      const ua = window.navigator.userAgent;
+      return /iP(ad|hone|od)/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS|mercury/.test(ua);
+    }
+    function isInStandaloneMode() {
+      return ('standalone' in window.navigator) && window.navigator.standalone;
+    }
+    if (isIosSafari() && !isInStandaloneMode()) {
+      if (!localStorage.getItem('hideIosBar')) {
+        const bar = document.createElement('div');
+        bar.id = 'ios-install-bar';
+        bar.innerHTML = `Para instalar esta app, toque em <b>Partilhar</b> <span style="font-size:1.2em;">&#x1f5d2;</span> e depois em <b>‘Adicionar ao Ecrã Principal’</b>.
+        <button class="close-btn" title="Fechar instrução" onclick="document.getElementById('ios-install-bar').remove(); localStorage.setItem('hideIosBar','1');">&times;</button>`;
+        document.body.appendChild(bar);
+      }
+    }
+  </script>
 </body>
 </html>
