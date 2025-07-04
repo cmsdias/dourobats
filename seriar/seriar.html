@@ -64,14 +64,14 @@
       padding: 0.5rem 1rem;
       font-size: 1rem;
       border: none;
-      background-color: #007bff;
+      background-color: #000000;
       color: white;
       border-radius: 4px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #0056b3;
+      background-color: #c9ac55;
     }
 
     #confirmacao {
@@ -112,12 +112,12 @@
   </div>
 
   <div class="section">
-    <h2>Inscritos (até 20)</h2>
+    <h2>Inscritos:</h2>
     <ul id="inscritos"></ul>
   </div>
 
   <div class="section">
-    <h2>Suplentes</h2>
+    <h2>Suplentes:</h2>
     <ul id="suplentes"></ul>
   </div>
 
@@ -157,7 +157,7 @@
     function atualizarListas() {
       const selecionados = Array.from(document.querySelectorAll('input[name="jogador"]:checked'))
         .map(input => jogadores[parseInt(input.value)])
-        .sort((a, b) => b.ranking - a.ranking); // ordem decrescente por ranking
+        .sort((a, b) => a.ranking - b.ranking); // ordem decrescente por ranking
 
       const inscritos = selecionados.slice(0, 20);
       const suplentes = selecionados.slice(20);
