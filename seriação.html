@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Seriação de Jogadores</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    ul { padding-left: 1rem; }
+    li { margin-bottom: 5px; }
+    .section { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Seriação de Jogadores</h1>
+  <p>Seleciona os jogadores disponíveis para o jogo:</p>
+
+  <form id="form-jogadores"></form>
+
+  <div class="section">
+    <h2>Inscritos:</h2>
+    <ul id="convocados"></ul>
+  </div>
+
+  <div class="section">
+    <h2>Suplentes:</h2>
+    <ul id="suplentes"></ul>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSu9ZGJ59j1Beyots09_Ui0QHv08a247oojM-1om4EQvu3g5ABG0pIKtmAb-WYD1TZGaR7OHvKnViHN/pub?gid=0&single=true&output=csv'; // <-- Substituir aqui
+
+    let jogadores = [];
+
+    async function fetchJogadores() {
+      const response = await fetch(CSV_URL);
+      const text = await response.text();
+      const linhas = text.trim().split('\n').slice(1); // Ignora cabeçalhos
+      return linhas.map(l => {
+        const [ranking, nome] = l.split(',');
+        return { nome: nome.trim(), ranking: parseInt(ranking) };
+      });
+    }
+
+    async function inicializar() {
+      jogadores = await fetchJogadores();
+      const form = document.getElementById('form-jogadores');
+
+      jogadores.forEach((jogador, index) => {
+        const label = document.createElement('label');
+        label.innerHTML = `
+          <input type="checkbox" name="jogador" value="${index}">
+          ${jogador.nome} (Rank: ${jogador.ranking})
+        <br>`;
+        form.appendChild(label);
+      });
+
+      form.addEventListener('change', atualizarListas);
+    }
+
+    function atualizarListas() {
+      const selecionados = Array.from(document.querySelectorAll('input[name="jogador"]:checked'))
+        .map(input => jogadores[parseInt(input.value)])
+        .sort((a, b) => b.ranking - a.ranking); // ordem decrescente
+
+      const convocados = selecionados.slice(0, 20);
+      const suplentes = selecionados.slice(20);
+
+      document.getElementById('convocados').innerHTML =
+        convocados.map(j => `<li>${j.nome} (${j.ranking})</li>`).join('');
+
+      document.getElementById('suplentes').innerHTML =
+        suplentes.map(j => `<li>${j.nome} (${j.ranking})</li>`).join('');
+    }
+
+    inicializar();
+  </script>
+</body>
+</html>
