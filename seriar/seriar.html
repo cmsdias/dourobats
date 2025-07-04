@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seriação de Jogadores</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+
+    h1, h2, p {
+      margin-top: 0;
+    }
+
+    form {
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+      transform: scale(1.2);
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0.5rem;
+    }
+
+    li {
+      margin-bottom: 5px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .section {
+      margin-top: 2rem;
+    }
+
+    button {
+      margin-right: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #confirmacao {
+      margin-left: 0.5rem;
+      color: green;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem 0.75rem;
+      }
+
+      button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      #confirmacao {
+        display: block;
+        margin-top: 0.5rem;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Seriação de Jogadores</h1>
+  <p>Seleciona os jogadores disponíveis para o jogo:</p>
+
+  <form id="form-jogadores"></form>
+
+  <div>
+    <button type="button" onclick="limparSelecao()">Limpar seleção</button>
+    <button type="button" onclick="copiarInscritos()">Copiar inscritos</button>
+    <span id="confirmacao"></span>
+  </div>
+
+  <div class="section">
+    <h2>Inscritos (até 20)</h2>
+    <ul id="inscritos"></ul>
+  </div>
+
+  <div class="section">
+    <h2>Suplentes</h2>
+    <ul id="suplentes"></ul>
+  </div>
+
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/SEU_LINK/pub?output=csv'; // <-- Substituir aqui
+
+    let jogadores = [];
+
+    async function fetchJogadores() {
+      const response = await fetch(CSV_URL);
+      const text = await response.text();
+      const linhas = text.trim().split('\n').slice(1); // Ignora cabeçalhos
+      return linhas.map(l => {
+        const [ranking, nome] = l.split(',');
+        return { nome: nome.trim(), ranking: parseInt(ranking) };
+      });
+    }
+
+    async function inicializar() {
+      jogadores = await fetchJogadores();
+      jogadores.sort((a, b) => a.nome.localeCompare(b.nome)); // lista para seleção: ordem alfabética
+
+      const form = document.getElementById('form-jogadores');
+      form.innerHTML = '';
+
+      jogadores.forEach((jogador, index) => {
+        const label = document.createElement('label');
+        label.innerHTML = `
+          <input type="checkbox" name="jogador" value="${index}">
+          ${jogador.nome} (Rank: ${jogador.ranking})`;
+        form.appendChild(label);
+      });
+
+      form.addEventListener('change', atualizarListas);
+    }
+
+    function atualizarListas() {
+      const selecionados = Array.from(document.querySelectorAll('input[name="jogador"]:checked'))
+        .map(input => jogadores[parseInt(input.value)])
+        .sort((a, b) => b.ranking - a.ranking); // ordem decrescente por ranking
+
+      const inscritos = selecionados.slice(0, 20);
+      const suplentes = selecionados.slice(20);
+
+      document.getElementById('inscritos').innerHTML =
+        inscritos.map(j => `<li>${j.nome} (${j.ranking})</li>`).join('');
+
+      document.getElementById('suplentes').innerHTML =
+        suplentes.map(j => `<li>${j.nome} (${j.ranking})</li>`).join('');
+    }
+
+    function limparSelecao() {
+      document.querySelectorAll('input[name="jogador"]').forEach(cb => cb.checked = false);
+      atualizarListas();
+    }
+
+    function copiarInscritos() {
+      const inscritos = Array.from(document.querySelectorAll('#inscritos li'))
+        .map(li => li.textContent)
+        .join('\n');
+
+      navigator.clipboard.writeText(inscritos).then(() => {
+        const confirmacao = document.getElementById('confirmacao');
+        confirmacao.textContent = 'Inscritos copiados!';
+        setTimeout(() => confirmacao.textContent = '', 3000);
+      }).catch(() => {
+        alert('Erro ao copiar para o clipboard.');
+      });
+    }
+
+    inicializar();
+  </script>
+</body>
+</html>
