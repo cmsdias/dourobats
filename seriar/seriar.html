@@ -109,7 +109,7 @@
 
   <div>
     <button type="button" onclick="limparSelecao()">Limpar seleção</button>
-    <button type="button" onclick="copiarInscritos()">Copiar inscritos</button>
+    <button type="button" onclick="copiarInscritos()">Copiar lista de inscritos</button>
     <span id="confirmacao"></span>
   </div>
 
@@ -183,7 +183,7 @@
 
       navigator.clipboard.writeText(inscritos).then(() => {
         const confirmacao = document.getElementById('confirmacao');
-        confirmacao.textContent = 'Inscritos copiados!';
+        confirmacao.textContent = 'Lista de inscritos copiada!';
         setTimeout(() => confirmacao.textContent = '', 3000);
       }).catch(() => {
         alert('Erro ao copiar para o clipboard.');
